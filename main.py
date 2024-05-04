@@ -9,6 +9,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pickle
+import json
+import numpy as np
 
 app = FastAPI()
 
@@ -23,12 +25,12 @@ app.add_middleware(
 )
 
 class model_input(BaseModel):
-    temperature:float
-    humidity:int
-    dew_point:float
-    sea_level_pressure:float
-    cloud:int
-    wind_speed:float
+    temperature: float
+    humidity: int
+    dew_point: float
+    sea_level_pressure: float
+    cloud: int
+    wind_speed: float
     
 
 model = pickle.load(open('cloudburst_prediction_trained.sav', 'rb'))
@@ -44,5 +46,8 @@ def cbprediction(input_parameters: model_input):
 
     input_list = [[temp, hum, dew, pressure, cloud, wind]]
     prediction = model.predict(input_list)
+
+    # Ensure the prediction result is JSON-serializable
+    prediction_json = prediction.tolist()  # Convert NumPy array to Python list
     
-    return prediction[0]
+    return {"prediction": prediction_json}
