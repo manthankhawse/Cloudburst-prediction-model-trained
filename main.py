@@ -31,29 +31,25 @@ class model_input(BaseModel):
     cloud:int
     wind_speed:float
     
-    
-prediction_model = pickle.load(open('cloudburst_prediction_trained.sav', 'rb'))
 
+
+model = pickle.load(open('cloudburst_prediction_trained.sav', 'rb'))
 
 @app.post('/predict')
-def cloudburst_pred(input_parameters: model_input):
-    temp = input_parameters.temperature
-    hum = input_parameters.humidity
-    dew = input_parameters.dew_point
-    pressure = input_parameters.sea_level_pressure
-    cloud = input_parameters.cloud
-    wind = input_parameters.wind_speed
+def cbprediction(input_parameters: model_input):
+    input_data = input_parameters.json()
+    input_dictionary = json.loads(input_data)
+    temp = input_dictionary['temperature']
+    hum = input_dictionary['humidity']
+    dew = input_dictionary['dew_point']
+    pressure = input_dictionary['sea_level_pressure']
+    cloud = input_dictionary['cloud']
+    wind = input_dictionary['wind_speed']
 
-    temp = int(temp)
-    hum = int(hum)
-    dew = float(dew)  # Make sure to convert to float if necessary
-    pressure = float(pressure)  # Make sure to convert to float if necessary
-    cloud = int(cloud)
-    wind = float(wind)  # Make sure to convert to float if necessary
 
-    input_list = [[temp, hum, dew, pressure, cloud, wind]]
-    prediction = prediction_model.predict(input_list)
-
+    input_list = [temp,hum,dew,pressure,cloud,wind]
+    prediction = model.predict([input_list])
+    
     return prediction[0]
     
     
