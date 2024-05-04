@@ -44,6 +44,13 @@ def cloudburst_pred(input_parameters: model_input):
     cloud = input_parameters.cloud
     wind = input_parameters.wind_speed
 
+    temp = int(temp)
+    hum = int(hum)
+    dew = float(dew)  # Make sure to convert to float if necessary
+    pressure = float(pressure)  # Make sure to convert to float if necessary
+    cloud = int(cloud)
+    wind = float(wind)  # Make sure to convert to float if necessary
+
     input_list = [[temp, hum, dew, pressure, cloud, wind]]
     prediction = prediction_model.predict(input_list)
 
